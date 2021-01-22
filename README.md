@@ -1,0 +1,1 @@
+Try out and build something useful using SQL (particularly using PostgreSQL).
