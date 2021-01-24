@@ -24,8 +24,6 @@ and (t.from_date = s.from_date + interval '2 days' or t.from_date = s.from_date)
 order by e.emp_no 
 
 /*
-* DB: Store
-* Table: orders
 * Question: Get all orders from customers who live in Ohio (OH), New York (NY) or Oregon (OR) state
 * ordered by orderid
 */
@@ -34,3 +32,22 @@ from "Store".public.orders o
 inner join customers c using(customerid)
 where c.state in ('OH', 'NY', 'OR')
 order by o.orderid;
+
+/*
+* Question: Show me the inventory for each product
+*/
+select p.prod_id, p.title, i.quan_in_stock from products p 
+inner join inventory i using(prod_id)
+
+/*
+* DB: Employees
+* Table: employees
+* Question: Show me for each employee which department they work in
+*/
+select e.emp_no, concat(e.first_name, ' ', e.last_name) as "full name", d2.dept_name 
+from "Employees".public.employees e 
+inner join dept_emp de on e.emp_no = de.emp_no  
+inner join departments d2 on de.dept_no = d2.dept_no; 
+
+
+ 
