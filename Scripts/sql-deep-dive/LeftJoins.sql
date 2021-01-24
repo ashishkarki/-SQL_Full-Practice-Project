@@ -14,10 +14,23 @@ select
 -- count(e.emp_no)
 e.emp_no , 
  s.salary,
- t.title 
+ coalesce(t.title, 'No title, Only salary Changed.') as "title"
+, coalesce(t.from_date::text, '-') as "title taken on"
 from employees e
 inner join salaries s on e.emp_no = s.emp_no --2844047
 left join titles t on e.emp_no = t.emp_no -- 4638507
 and (t.from_date = s.from_date + interval '2 days' or t.from_date = s.from_date) -- 77051
 --group by e.emp_no 
 order by e.emp_no 
+
+/*
+* DB: Store
+* Table: orders
+* Question: Get all orders from customers who live in Ohio (OH), New York (NY) or Oregon (OR) state
+* ordered by orderid
+*/
+select o.customerid, concat(c.firstname, ' ', c.lastname) , o.orderid 
+from "Store".public.orders o
+inner join customers c using(customerid)
+where c.state in ('OH', 'NY', 'OR')
+order by o.orderid;
