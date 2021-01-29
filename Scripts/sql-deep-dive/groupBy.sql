@@ -42,3 +42,16 @@ group by
 		(prod_id)
 	)
 order by prod_id desc; 
+
+/*
+*  Show me all the employees that work in the department development and the from and to date.
+*  Database: Employees
+*/
+
+select e.emp_no, concat(e.first_name, ' ', e.last_name) as "full name",
+	de.from_date, de.to_date 
+from employees as e
+inner join dept_emp de on e.emp_no = de.emp_no
+inner join departments d on de.dept_no = d.dept_no
+where lower(d.dept_name)= 'development'
+order by e.emp_no 
