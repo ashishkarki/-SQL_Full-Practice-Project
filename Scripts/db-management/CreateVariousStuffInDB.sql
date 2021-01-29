@@ -9,3 +9,5 @@ create schema sub_mastery_1;
 
 -- creating a role
 create role readonly with login encrypted password 'readonly';
+
+-- creating user
