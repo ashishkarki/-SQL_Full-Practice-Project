@@ -1,1 +1,3 @@
 Try out and build something useful using SQL (particularly using PostgreSQL).
+
+## NOTE: go forth and explore beyond the "Scripts" directory, Y'All...
