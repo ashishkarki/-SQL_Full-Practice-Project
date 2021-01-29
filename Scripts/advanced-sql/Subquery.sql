@@ -66,3 +66,95 @@ join (
 		group by emp_no 
 	) as ls using(emp_no)
 where ls.max = s.from_date 
+
+-- subquery operators: exists, any, some, all, in, single-value
+-- any example
+select prod_id
+from products
+where category = ANY (
+	select 
+	 category 
+	from categories
+	where categoryname in ('Comedy', 'Family', 'Classics')
+)
+
+-- all example
+select 
+	*
+from products
+join inventory i using (prod_id)
+where i.sales > ALL ( 
+-- each i.sales should be > every avg. sales from subquery
+	select -- returns one row for each category 
+		avg(sales) 
+	from inventory i2 
+	join products p using (prod_id)
+	group by p.category 
+);
+
+/*
+* Question: Get all orders from customers who live in Ohio (OH), 
+* New York (NY) or Oregon (OR) state ordered by orderid
+*/
+-- 1. using joins first
+explain analyze -- Execution Time: 5.049 ms
+select 
+	o.orderdate, o.customerid, o.totalamount 
+from orders o
+join customers c on c.customerid = o.customerid
+where c.state in ('OH', 'NY', 'OR')
+
+-- 2. using subquery
+explain analyze -- Execution Time: 9.958 ms
+select 
+	o.orderdate, o.customerid, o.totalamount 
+from orders o
+where o.customerid in (
+	select customerid 
+	from customers c
+	where c.state in ('OH', 'NY', 'OR')
+)
+
+explain analyze -- Execution Time: 4.640 ms
+SELECT c.firstname, c.lastname, o.orderid 
+FROM orders AS o, (
+    SELECT customerid, state, firstname, lastname
+    FROM customers
+) AS c
+WHERE  o.customerid = c.customerid AND 
+c.state IN ('NY', 'OH', 'OR')
+ORDER BY o.orderid;
+
+/*
+* DB: Employees
+* Table: employees
+* Question: Filter employees who have emp_no 110183 as a manager
+*/
+-- using joins
+explain analyze -- Execution Time: 113.514 ms
+select 
+	e.emp_no,
+	concat(first_name, ' ', last_name) as "employee name",
+	--d.dept_name,
+	dm.emp_no as "manager id"
+from employees e
+join dept_emp de on e.emp_no = de.emp_no
+join departments d on de.dept_no = d.dept_no
+join dept_manager dm on de.dept_no = dm.dept_no 
+where dm.emp_no = 110183
+order by e.emp_no ; 
+
+-- alternative using subquery
+explain analyze -- Execution Time: 60.498 ms
+SELECT emp_no, first_name, last_name
+FROM employees
+WHERE emp_no IN (
+    SELECT emp_no
+    FROM dept_emp
+    WHERE dept_no = (
+        SELECT dept_no 
+        FROM dept_manager
+        WHERE emp_no = 110183
+    )
+)
+ORDER BY emp_no
