@@ -32,3 +32,9 @@
 
 -- view a list of available roles
 > \du
+
+-- common data types in postgres
+-- 1. Boolean (true/false, 1/0, y/n) 2. Character (char, varchar and text)
+-- 3. Numeric (integers (smallint, int, bigint) and floats (float4, float8, decimal))
+-- 4. Array (group of elements of Same Type)
+
